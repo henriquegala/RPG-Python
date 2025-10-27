@@ -1,3 +1,5 @@
+#WELCOME TO SPOODY FIGHTERS!!!
+
 import random
 
 class Personagem:
