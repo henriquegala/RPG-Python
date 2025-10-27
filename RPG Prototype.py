@@ -221,4 +221,5 @@ iniciar_combate(lutador1,lutador2) #Inicia o combate com os personagens selecion
 #FAZER:
 # Incrementar golpes de BUFF/DEBUFF
 # Incrementar a questão do ataque base, vida max...... para ajustar para com os BUFFS e DEBUFFS
+# Ajeitar os BUFFS/DEBUFFS para balancear os personagens
 # Mostrar código pros crias :)
