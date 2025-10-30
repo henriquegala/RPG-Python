@@ -1,13 +1,25 @@
 #WELCOME TO SPOODY FIGHTERS!!!
 
+import pygame
+
 import random
+
+pygame.init()
 
 class Personagem:
     def __init__(self, nome, HP, attack, defense, speed, golpes): #Define a classe de personagem 
         self.nome = nome #Nome do personagem
         self.HP = HP #0 até 100 (Baseado na altura)
+        self.HP_max = HP
+        
         self.attack = attack #0 até 20 (Baseado no Gym)
+        self.attack_min = 5
+        self.attack_max = attack + 10
+        
         self.defense = defense #0 até 20 (Baseado no peso)
+        self.defense_min = 5
+        self.defense_max = defense + 10
+        
         self.speed = speed #0 até 10 (Baseado na resistência)
         self.golpes = golpes
     
@@ -37,17 +49,80 @@ class Personagem:
                 print(f"{self.nome} não pode atacar pois está sem vida!")
         
         elif tipo == "CURA": #Define o tipo de golpe que é
-            self.HP += valor_efeito
-            print(f"💚 {self.nome} recuperou {valor_efeito} de HP!")
-        
+            old_HP = self.HP
+            novo_HP = self.HP + valor_efeito
+            
+            self.HP = min(novo_HP, self.HP_max)
+            
+            healing = self.HP - old_HP
+            
+            if healing > 0:
+                print(f"💚 {self.nome} recuperou {healing} pontosde HP!")
+                if self.HP == self.HP_max and old_HP < self.HP_max:
+                    print(f"✨ HP máximo alcançado {self.nome}!")
+            else:
+                print(f"🚫 {self.nome} já estava com HP máximo.")
+                
         elif tipo == "BUFF DEFESA": #Define o tipo de golpe que é
-            self.defense += valor_efeito
-            print(f"⬆️ Defesa do {self.nome} aumentada para {self.defense}")
+            old_defense = self.defense
+            novo_defense = self.defense + valor_efeito
+            
+            self.defense = min(novo_defense, self.defense_max)
+            
+            buff = self.defense - old_defense
+            
+            if buff > 0:
+                print(f"⬆️ Defesa do {self.nome} aumentada em {buff} pontos!")
+                if self.defense == self.defense_max and old_defense < self.defense_max:
+                    print(f"✨ Defesa máximo alcançada {self.nome}!")
+            else:
+                print(f"🚫 {self.nome} já estava com defesa máximo.")
         
         elif tipo == "BUFF DANO": #Define o tipo de golpe que é
-            self.attack += valor_efeito
-            print(f"⬆️ Ataque de {self.nome} aumentada para {self.attack}")
+            old_attack = self.attack
+            novo_attack = self.attack + valor_efeito
+            
+            self.attack = min(novo_attack, self.attack_max)
+            
+            buff = self.attack - old_attack
+            
+            if buff > 0:
+                print(f"⬆️ Ataque do {self.nome} aumentada em {buff} pontos!")
+                if self.attack == self.attack_max and old_attack < self.attack_max:
+                    print(f"✨ Ataque máximo alcançado {self.nome}!")
+            else:
+                print(f"🚫 {self.nome} já estava com ataque máximo.")
+            
+        elif tipo == "DEBUFF DEFESA": #Define o tipo de golpe que é
+            old_defense = self.defense
+            novo_defense = self.defense - valor_efeito
+            
+            self.defense = max(novo_defense, self.defense_min)
+            
+            debuff = self.defense - old_defense
+            
+            if debuff < 0:
+                print(f"⬆⬇️ Defesa do {self.nome} diminuída em {-debuff} pontos!")
+                if self.defense == self.defense_min and old_defense > self.defense_min:
+                    print(f"✨ Defesa mínima alcançada {self.nome}!")
+            else:
+                print(f"🚫 {self.nome} já estava com defesa mínima.")
         
+        elif tipo == "DEBUFF DANO": #Define o tipo de golpe que é
+            old_attack = self.attack
+            novo_attack = self.attack - valor_efeito
+            
+            self.attack = max(novo_attack, self.attack_min)
+            
+            debuff = self.attack - old_attack
+            
+            if debuff < 0:
+                print(f"⬆⬇️ Ataque do {self.nome} diminuída em {-debuff} pontos!")
+                if self.attack == self.attack_min and old_attack > self.attack_min:
+                    print(f"✨ Ataque mínima alcançado {self.nome}!")
+            else:
+                print(f"🚫 {self.nome} já estava com ataque mínimo.")
+            
         else:
             print("Este golpe tem um efeito desconhecido!")
         
@@ -81,6 +156,10 @@ def selecao_execucao_golpe(atacante, alvo): #Define como funciona a execução d
             continue
         
         golpe_escolhido = atacante.golpes[escolha - 1]
+        
+        if golpe_escolhido.uso_atual == 0:
+            print("❌ Este golpe não tem mais usos (PP)! Escolha outra ação.")
+            continue
         
         atacante.usar_golpe(alvo, golpe_escolhido)
         break
@@ -214,12 +293,13 @@ def golpes_Tomas(ataque_base): #Define o golpe dos lutadores
     golpe_Tomas = [golpe_1, golpe_2]
     return golpe_Tomas
 
-lutador1, lutador2 = character_selection() #Inicia a seleção dos personagens
+def main():
+    lutador1, lutador2 = character_selection() #Inicia a seleção dos personagens
 
-iniciar_combate(lutador1,lutador2) #Inicia o combate com os personagens selecionados
+    iniciar_combate(lutador1,lutador2) #Inicia o combate com os personagens selecionados
+
+main()
 
 #FAZER:
-# Incrementar golpes de BUFF/DEBUFF
-# Incrementar a questão do ataque base, vida max...... para ajustar para com os BUFFS e DEBUFFS
-# Ajeitar os BUFFS/DEBUFFS para balancear os personagens
-# Mostrar código pros crias :)
+#Incrementar a questão dos status effects
+#Pesquisar vídeos sobre como usar o pygame.
