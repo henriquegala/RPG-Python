@@ -22,6 +22,7 @@ class Personagem:
         
         self.speed = speed #0 até 10 (Baseado na resistência)
         self.golpes = golpes
+        self.status_effects = {}
     
     def usar_golpe(self, alvo, golpe): #Define a função usar golpe
         print(f"{self.nome} usou {golpe.nome_golpe}")
@@ -36,7 +37,6 @@ class Personagem:
         golpe.uso_atual -= 1
         
         tipo = golpe.tipo_efeito
-        dano_base_golpe = golpe.dano_base #AINDA ESTÁ INCOMPLETO
         valor_efeito = golpe.valor_efeito
         
         if tipo == "DANO": #Define o tipo de golpe que é
@@ -122,6 +122,20 @@ class Personagem:
                     print(f"✨ Ataque mínima alcançado {self.nome}!")
             else:
                 print(f"🚫 {self.nome} já estava com ataque mínimo.")
+        
+        elif tipo == "POISON":
+            if "POISON" in alvo.status_effects:
+                print("O alvo já está envenenado!")
+                return
+            else:
+                alvo.status_effects["POISON"] = {"Turnos restantes": 3, "Dano base": 5}
+            
+        elif tipo == "SLEEP":
+            if "SLEEP" in alvo.status_effects:
+                print("O alvo já está adormecido|")
+                return
+            else:
+                alvo.status_effects["SLEEP"] = {"Turnos para ativar": 1,"Turnos restantes": 2, "Dano base": 0}
             
         else:
             print("Este golpe tem um efeito desconhecido!")
@@ -293,6 +307,8 @@ def golpes_Tomas(ataque_base): #Define o golpe dos lutadores
     golpe_Tomas = [golpe_1, golpe_2]
     return golpe_Tomas
 
+#def aplicar_efeitos_de_turno(): #COMPLETAR FUNÇÂO
+
 def main():
     lutador1, lutador2 = character_selection() #Inicia a seleção dos personagens
 
@@ -301,5 +317,5 @@ def main():
 main()
 
 #FAZER:
-#Incrementar a questão dos status effects
+#Completar a lógica dos status effects
 #Pesquisar vídeos sobre como usar o pygame.
