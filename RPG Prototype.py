@@ -34,19 +34,28 @@ class Personagem:
         if golpe.uso_atual <= 0: #Verifica o PP do golpe a ser usado
             print(f"{golpe.nome_golpe} não tem mais usos (PP)!")
         
-        golpe.uso_atual -= 1
-        
         tipo = golpe.tipo_efeito
         valor_efeito = golpe.valor_efeito
         
         if tipo == "DANO": #Define o tipo de golpe que é
             if self.HP > 0: #Ataque
-                max_life = alvo.HP #Vida total antes do ataque
-                alvo.HP = round(alvo.HP - ((self.attack/alvo.defense)*10)) #Fórmula do ataque
-                dano = (max_life - alvo.HP) #Dano dado após o ataque
-                print(f"💥 {self.nome} atacou {alvo.nome} causando {dano} de dano!\n {alvo.nome} está com {alvo.HP} HP!")
+                old_HP = alvo.HP #Vida total antes do ataque
+                
+                dano_base = round((self.attack/alvo.defense)*10) #Fórmula do ataque
+                
+                novo_HP = old_HP - dano_base
+                alvo.HP = max(0, novo_HP)
+                
+                dano_real = old_HP - alvo.HP
+                
+                print(f"💥 {self.nome} atacou {alvo.nome} causando {dano_real} de dano!\n {alvo.nome} está com {alvo.HP} HP!")
             else:
                 print(f"{self.nome} não pode atacar pois está sem vida!")
+                
+            golpe.uso_atual -=1
+        
+            print(f"Usos restantes {golpe.nome_golpe}: {golpe.uso_atual}")
+            return
         
         elif tipo == "CURA": #Define o tipo de golpe que é
             old_HP = self.HP
@@ -63,6 +72,11 @@ class Personagem:
             else:
                 print(f"🚫 {self.nome} já estava com HP máximo.")
                 
+            golpe.uso_atual -=1
+        
+            print(f"Usos restantes {golpe.nome_golpe}: {golpe.uso_atual}")
+            return
+                
         elif tipo == "BUFF DEFESA": #Define o tipo de golpe que é
             old_defense = self.defense
             novo_defense = self.defense + valor_efeito
@@ -77,6 +91,11 @@ class Personagem:
                     print(f"✨ Defesa máximo alcançada {self.nome}!")
             else:
                 print(f"🚫 {self.nome} já estava com defesa máximo.")
+                
+            golpe.uso_atual -=1
+        
+            print(f"Usos restantes {golpe.nome_golpe}: {golpe.uso_atual}")
+            return
         
         elif tipo == "BUFF DANO": #Define o tipo de golpe que é
             old_attack = self.attack
@@ -92,6 +111,11 @@ class Personagem:
                     print(f"✨ Ataque máximo alcançado {self.nome}!")
             else:
                 print(f"🚫 {self.nome} já estava com ataque máximo.")
+                
+            golpe.uso_atual -=1
+        
+            print(f"Usos restantes {golpe.nome_golpe}: {golpe.uso_atual}")
+            return
             
         elif tipo == "DEBUFF DEFESA": #Define o tipo de golpe que é
             old_defense = self.defense
@@ -102,11 +126,16 @@ class Personagem:
             debuff = self.defense - old_defense
             
             if debuff < 0:
-                print(f"⬆⬇️ Defesa do {self.nome} diminuída em {-debuff} pontos!")
+                print(f"⬇️ Defesa do {self.nome} diminuída em {-debuff} pontos!")
                 if self.defense == self.defense_min and old_defense > self.defense_min:
                     print(f"✨ Defesa mínima alcançada {self.nome}!")
             else:
                 print(f"🚫 {self.nome} já estava com defesa mínima.")
+            
+            golpe.uso_atual -=1
+        
+            print(f"Usos restantes {golpe.nome_golpe}: {golpe.uso_atual}")
+            return
         
         elif tipo == "DEBUFF DANO": #Define o tipo de golpe que é
             old_attack = self.attack
@@ -118,10 +147,16 @@ class Personagem:
             
             if debuff < 0:
                 print(f"⬆⬇️ Ataque do {self.nome} diminuída em {-debuff} pontos!")
+                
                 if self.attack == self.attack_min and old_attack > self.attack_min:
                     print(f"✨ Ataque mínima alcançado {self.nome}!")
             else:
                 print(f"🚫 {self.nome} já estava com ataque mínimo.")
+                
+            golpe.uso_atual -=1
+        
+            print(f"Usos restantes {golpe.nome_golpe}: {golpe.uso_atual}")
+            return
         
         elif tipo == "POISON":
             if "POISON" in alvo.status_effects:
@@ -129,6 +164,10 @@ class Personagem:
                 return
             else:
                 alvo.status_effects["POISON"] = {"Turnos restantes": 3, "Dano base": 5}
+                golpe.uso_atual -=1
+        
+                print(f"Usos restantes {golpe.nome_golpe}: {golpe.uso_atual}")
+            return
             
         elif tipo == "SLEEP":
             if "SLEEP" in alvo.status_effects:
@@ -136,11 +175,14 @@ class Personagem:
                 return
             else:
                 alvo.status_effects["SLEEP"] = {"Turnos para ativar": 1,"Turnos restantes": 2, "Dano base": 0}
-            
+                golpe.uso_atual -=1
+        
+                print(f"Usos restantes {golpe.nome_golpe}: {golpe.uso_atual}")
+            return
+        
         else:
             print("Este golpe tem um efeito desconhecido!")
-        
-        print(f"Usos restantes {golpe.nome_golpe}: {golpe.uso_atual}")
+            return
 
 class Golpe: #Classe para definir os golpes
     def __init__(self, nome_golpe, dano_base, uso_maximo, tipo_efeito, valor_efeito):
