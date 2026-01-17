@@ -19,8 +19,8 @@ While the initial version runs on the CLI (Command Line Interface) to ensure sol
 Based on the long-term development plan:
 
 ### Phase 1: The Core (Terminal Logic)
-- [ ] Character & Enemy Class Structure (Attributes: HP, Attack, Defense, Mana).
-- [ ] Turn-Based Combat Loop (Input/Output).
+- [X] Character & Enemy Class Structure (Attributes: HP, Attack, Defense, Mana).
+- [X] Turn-Based Combat Loop (Input/Output).
 - [ ] Damage Calculation Logic & Win/Loss Conditions.
 
 ### Phase 2: Graphical Interface (Pygame)
